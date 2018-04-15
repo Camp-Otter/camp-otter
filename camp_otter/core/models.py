@@ -1,4 +1,5 @@
 from django.db import models
+from django.core.validators import RegexValidator
 
 
 class Place(models.Model):
@@ -20,8 +21,6 @@ class Place(models.Model):
         return address_string
 
 
-
-
 class Person(models.Model):
     first_name = models.CharField(max_length=100)
     last_name = models.CharField(max_length=100)
@@ -32,13 +31,13 @@ class Person(models.Model):
 
 
 class ContactPhone(models.Model):
-    phone_number = models.CharField(max_length=15)
+    phone_number = models.CharField(max_length=16)
     notes = models.CharField(max_length=50)
     person = models.ForeignKey(Person, on_delete=models.PROTECT)
 
 
 class ContactEmail(models.Model):
-    email = models.EmailField
+    email = models.EmailField()
     notes = models.CharField(max_length=50)
     person = models.ForeignKey(Person, on_delete=models.PROTECT)
 
@@ -60,8 +59,14 @@ class Campaign(models.Model):
     ballot_question = models.ForeignKey(BallotQuestion, on_delete=models.PROTECT)
     votes = models.IntegerField(default=0)
 
+    def __str__(self):
+        return self.campaign_name
+
 
 class CampaignStaff(models.Model):
     campaign_name = models.ForeignKey(Campaign, on_delete=models.PROTECT)
     staff_memeber = models.ForeignKey(Person, on_delete=models.PROTECT)
     position = models.CharField(max_length=250)
+
+    def __str__(self):
+        return str(self.staff_memeber)
