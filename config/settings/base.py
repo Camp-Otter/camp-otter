@@ -86,6 +86,8 @@ WSGI_APPLICATION = 'config.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/2.0/ref/settings/#databases
 
+DB_PASSWORD = env('POSTGIS_PASSWORD', default='testdjango')
+
 # Database is setup to connect to a networked docker container running postgis.
 # TODO: this needs to be updated if using docker compose
 DATABASES = {
@@ -93,7 +95,7 @@ DATABASES = {
         'ENGINE': 'django.contrib.gis.db.backends.postgis',
         'NAME': 'geodjango',
         'USER': 'postgres',
-        'PASSWORD': 'testdjango',
+        'PASSWORD': DB_PASSWORD,
         'HOST': 'localhost',
         'PORT': '8080',
     }
