@@ -22,7 +22,7 @@ docker run --name django-postgis -e POSTGRES_PASSWORD=testdjango -p:8080::5432 -
 
 Connect to the server to create the database:
 ```shell
-docker run -it --link django-postgis:postgis postgres psql -h postgres -U postgres
+docker run -it --link django-postgis:postgres postgres psql -h postgres -U postgres
 ```
 and the password from above. (This password can also be set using the `POSTGIS_PASSWORD` environment variable.)
 
