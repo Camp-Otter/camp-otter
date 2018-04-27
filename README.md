@@ -17,7 +17,7 @@ First, install [Docker](https://www.docker.com/).
 
 Spin up a database container with the command:
 ```shell
-docker run --name django-postgis -e POSTGRES_PASSWORD=testdjango -p:8080::5432 -d mdillon/postgis
+docker run --name django-postgis -e POSTGRES_PASSWORD=testdjango -p:8080:5432 -d mdillon/postgis
 ```
 
 Connect to the server to create the database:
