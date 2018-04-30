@@ -1,6 +1,8 @@
 pytz==2018.4  # https://github.com/stub42/pytz
 
+geopy==1.13
+
 # Django
 # ------------------------------------------------------------------------------
-django==2.0.4  # pyup: < 2.1  # https://www.djangoproject.com/
+django==2.0.3  # pyup: < 2.1  # https://www.djangoproject.com/
 django-environ==0.4.4  # https://github.com/joke2k/django-environ

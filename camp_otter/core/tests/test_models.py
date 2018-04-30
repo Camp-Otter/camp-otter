@@ -1,5 +1,6 @@
 from django.test import TestCase
 from django.core.exceptions import ValidationError
+from django.contrib.auth.models import User
 from camp_otter.core.models import Place, Person, ContactPhone, ContactEmail, Election, BallotQuestion, Campaign, CampaignStaff
 
 # Tests for core models
@@ -25,6 +26,12 @@ class PlaceModelTests(TestCase):
         person2 = Person(first_name='Joe', last_name='Test', residence=house)
         person2.save()
         self.assertQuerysetEqual(house.person_set.all(), [repr(person1), repr(person2)], ordered=False)
+
+    def test_spatial_field(self):
+        house = Place(street_address='1 Broadway', city='Newport', state='RI')
+        house.save()
+        house.geocode()
+        self.assertEqual(str(house.point.y), '41.490611')
 
 
 class PersonModelTests(TestCase):

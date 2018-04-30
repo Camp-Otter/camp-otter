@@ -1,5 +1,7 @@
-from django.db import models
+from django.contrib.gis.db import models
 from django.core.validators import RegexValidator
+
+from geopy.geocoders import Nominatim
 
 
 class Place(models.Model):
@@ -10,6 +12,16 @@ class Place(models.Model):
     city = models.CharField(max_length=250)
     state = models.CharField(max_length=2)
     zip_code = models.CharField(max_length=5)
+
+    point = models.PointField(default='POINT(0.0 0.0)')
+
+    def geocode(self):
+        geolocator = Nominatim()
+        address_string = self.street_address + ', ' + self.city + ', ' + self.state
+        location = geolocator.geocode(address_string)
+        self.point.x = location.longitude
+        self.point.y = location.latitude
+        self.save()
 
     def __str__(self):
         address_string = ''
