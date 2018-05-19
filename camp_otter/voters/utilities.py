@@ -29,3 +29,8 @@ def import_voter_dataframe(df):
     for p, i in voters:
         voter_list.extend([Voter(person=p, voter_id=i)])
     Voter.objects.bulk_create(voter_list)
+
+
+def handle_uploaded_voter_file(file):
+    first_line = file.readline()
+    print(first_line)

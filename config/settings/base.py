@@ -68,7 +68,9 @@ ROOT_URLCONF = 'config.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [
+            'camp_otter/templates',
+        ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
