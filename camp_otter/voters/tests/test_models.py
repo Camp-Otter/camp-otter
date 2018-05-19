@@ -2,7 +2,7 @@ from django.test import TestCase
 from camp_otter.voters.models import Voter
 from camp_otter.core.models import Place, Person, Election
 
-# Create your tests here.
+
 class VoterModelTests(TestCase):
 
     def test_create_new_voter(self):

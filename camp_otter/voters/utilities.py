@@ -9,7 +9,6 @@ def import_voter_dataframe(df):
     :param df:
     :return:
     """
-    num_records = len(df)  # number of records in the dataframe
 
     # create places by getting unique addresses
     create_places_from_dataframe(df)
