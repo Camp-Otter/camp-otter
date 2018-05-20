@@ -11,7 +11,7 @@ class Place(models.Model):
     street_address_2 = models.CharField(max_length=100, blank=True)
     city = models.CharField(max_length=250)
     state = models.CharField(max_length=2)
-    zip_code = models.CharField(max_length=5)
+    zip_code = models.CharField(max_length=10)
 
     point = models.PointField(default='POINT(0.0 0.0)')
 

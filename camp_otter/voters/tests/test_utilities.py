@@ -56,3 +56,4 @@ class FileImportTests(TestCase):
         handle_uploaded_voter_file(file)
         # this should print out a dataframe in the console
         self.assertEqual(Voter.objects.all().count(), 2)
+        self.assertEqual(Place.objects.all().count(), 2)

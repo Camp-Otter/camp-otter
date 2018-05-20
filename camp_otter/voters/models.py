@@ -22,7 +22,7 @@ class VoterManager(models.Manager):
 
 class Voter(models.Model):
     person = models.OneToOneField(Person, on_delete=models.PROTECT)
-    voter_id = models.IntegerField()
+    voter_id = models.BigIntegerField()
 
     # use an object manager to handle object creation
     objects = VoterManager()

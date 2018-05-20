@@ -44,7 +44,7 @@ def handle_uploaded_voter_file(file):
         'first_name': 'FIRST NAME',
         'last_name': 'LAST NAME',
         'voter_id': 'VOTER ID',
-        'address': 'STREET ADDRESS',
+        'address': 'STREET NAME',
         'city': 'CITY',
         'state': 'STATE',
         'zip': 'ZIP CODE',
@@ -55,4 +55,4 @@ def handle_uploaded_voter_file(file):
 
     print(filtered_data.head())
 
-    import_voter_dataframe(filtered_data)
+    import_voter_dataframe(filtered_data.dropna())
