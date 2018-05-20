@@ -1,8 +1,11 @@
 from django.test import TestCase
 from django.core.files.uploadedfile import SimpleUploadedFile
+
 from camp_otter.voters.utilities import import_voter_dataframe, handle_uploaded_voter_file
 from camp_otter.core.models import Place, Person
 from camp_otter.voters.models import Voter
+
+from camp_otter.voters.tests.testdata.dummy_data import UPLOADED_CSV_DATA
 
 import pandas as pd
 
@@ -49,7 +52,7 @@ class FileImportTests(TestCase):
 
 
     def test_file_import_to_df(self):
-        file = SimpleUploadedFile('test.csv', b'col_a, col_b \n 1,2', content_type="text/csv")
+        file = SimpleUploadedFile('test.csv', UPLOADED_CSV_DATA, content_type="text/csv")
         handle_uploaded_voter_file(file)
         # this should print out a dataframe in the console
-        #TODO: handle_uploaded_voter_file will update something external, so check for that
+        self.assertEqual(Voter.objects.all().count(), 2)

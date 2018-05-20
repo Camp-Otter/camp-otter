@@ -36,7 +36,8 @@ def import_voter_dataframe(df):
 def handle_uploaded_voter_file(file):
 
     # read file into a dataframe
-    df = pd.read_csv(file)
+    # TODO: read excel files
+    df = pd.read_csv(file, header=0)
 
     # dictionary to translate file columns to model fields
     field_dict = {
@@ -46,6 +47,12 @@ def handle_uploaded_voter_file(file):
         'address': 'STREET ADDRESS',
         'city': 'CITY',
         'state': 'STATE',
-        'zip': 'ZIPCODE'
+        'zip': 'ZIP CODE',
     }
-    print(df.head())
+
+    filtered_data = df[list(field_dict.values())]
+    filtered_data.columns = list(field_dict.keys())
+
+    print(filtered_data.head())
+
+    import_voter_dataframe(filtered_data)
