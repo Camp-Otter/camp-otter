@@ -1,6 +1,8 @@
 from camp_otter.core.models import Person, Place
 from camp_otter.voters.models import Voter
 
+import pandas as pd
+
 from camp_otter.core.utilities import create_places_from_dataframe
 
 
@@ -32,5 +34,18 @@ def import_voter_dataframe(df):
 
 
 def handle_uploaded_voter_file(file):
-    first_line = file.readline()
-    print(first_line)
+
+    # read file into a dataframe
+    df = pd.read_csv(file)
+
+    # dictionary to translate file columns to model fields
+    field_dict = {
+        'first_name': 'FIRST NAME',
+        'last_name': 'LAST NAME',
+        'voter_id': 'VOTER ID',
+        'address': 'STREET ADDRESS',
+        'city': 'CITY',
+        'state': 'STATE',
+        'zip': 'ZIPCODE'
+    }
+    print(df.head())

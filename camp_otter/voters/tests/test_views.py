@@ -1,5 +1,6 @@
 from django.test import TestCase, Client
 from django.urls import reverse_lazy
+from django.core.files.uploadedfile import SimpleUploadedFile
 from camp_otter.voters.views import VoterListView
 
 
@@ -16,6 +17,7 @@ class VoterViewTests(TestCase):
         self.assertEqual(response.status_code, 200)
 
     def test_file_upload_post(self):
-        client = Client()
-        response = client.post(reverse_lazy('file-upload'), data={'title': 'Title', 'file': 'abcd'})
-        self.assertRedirects(response, reverse_lazy('success'), status_code=302, target_status_code=200)
+        file = SimpleUploadedFile('test.csv', b'col_a, col_b \n 1,2', content_type="text/csv")
+        response = self.client.post(reverse_lazy('file-upload'), {'file': file})
+        self.assertContains(response, 'Success')
+        #self.assertRedirects(response, reverse_lazy('success'), target_status_code=200)

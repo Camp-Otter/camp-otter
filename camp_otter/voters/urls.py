@@ -1,7 +1,7 @@
 from django.urls import path
 from django.http import HttpResponse
 
-from .views import VoterListView, FileUploadView, success, upload_file
+from .views import VoterListView, FileUploadView, success
 
 urlpatterns = [
     path('', VoterListView.as_view(), name='voter-list'),
