@@ -36,8 +36,12 @@ def import_voter_dataframe(df):
 def handle_uploaded_voter_file(file):
 
     # read file into a dataframe
-    # TODO: read excel files
-    df = pd.read_csv(file, header=0)
+    filename = file.name
+    if filename.endswith('.csv'):
+        df = pd.read_csv(file, header=0)
+    elif (filename.endswith('.xls') or filename.endswith('.xlsx')):
+        df = pd.read_excel(file, header=0)
+
 
     # dictionary to translate file columns to model fields
     field_dict = {

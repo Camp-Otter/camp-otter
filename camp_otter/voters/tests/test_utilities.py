@@ -50,10 +50,17 @@ class FileImportTests(TestCase):
         self.assertEqual(str(Voter.objects.last().person.residence), '1 Broadway, Newport, RI')
         self.assertEqual(Voter.objects.first().voter_id, 10)
 
-
-    def test_file_import_to_df(self):
+    def test_csv_file_import_to_df(self):
         file = SimpleUploadedFile('test.csv', UPLOADED_CSV_DATA, content_type="text/csv")
         handle_uploaded_voter_file(file)
         # this should print out a dataframe in the console
+        self.assertEqual(Voter.objects.all().count(), 2)
+        self.assertEqual(Place.objects.all().count(), 2)
+
+    def test_xlsx_file_import_to_df(self):
+        with open('camp_otter/voters/tests/testdata/dummy_data.xlsx') as infile:  #FIXME: Handle excel file with SimpleUploadedFile(). This works with manual testing
+            file = SimpleUploadedFile('test.xlsx', infile.read())
+            handle_uploaded_voter_file(file)
+            # this should print out a dataframe in the console
         self.assertEqual(Voter.objects.all().count(), 2)
         self.assertEqual(Place.objects.all().count(), 2)
