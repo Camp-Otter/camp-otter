@@ -21,5 +21,5 @@ class VoterViewTests(TestCase):
     def test_file_upload_post(self):
         file = SimpleUploadedFile('test.csv', UPLOADED_CSV_DATA, content_type="text/csv")
         client = Client()
-        response = client.post(reverse_lazy('file-upload'), {'title': 'test', 'file': file})
+        response = client.post(reverse_lazy('file-upload'), {'file': file})
         self.assertRedirects(response, reverse_lazy('success'), target_status_code=200)

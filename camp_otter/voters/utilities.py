@@ -33,26 +33,18 @@ def import_voter_dataframe(df):
     Voter.objects.bulk_create(voter_list)
 
 
-def handle_uploaded_voter_file(file):
+def load_uploaded_file_to_dataframe(file):
 
-    # read file into a dataframe
     filename = file.name
     if filename.endswith('.csv'):
         df = pd.read_csv(file, header=0)
-    elif (filename.endswith('.xls') or filename.endswith('.xlsx')):
+    elif filename.endswith('.xls') or filename.endswith('.xlsx'):
         df = pd.read_excel(file, header=0)
 
+    return df
 
-    # dictionary to translate file columns to model fields
-    field_dict = {
-        'first_name': 'FIRST NAME',
-        'last_name': 'LAST NAME',
-        'voter_id': 'VOTER ID',
-        'address': 'STREET NAME',
-        'city': 'CITY',
-        'state': 'STATE',
-        'zip': 'ZIP CODE',
-    }
+
+def import_uploaded_voter_file_to_db(df, field_dict):
 
     filtered_data = df[list(field_dict.values())]
     filtered_data.columns = list(field_dict.keys())
