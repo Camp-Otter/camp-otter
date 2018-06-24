@@ -1,7 +1,7 @@
 {% extends '_base.html' %}
 
 {% block content %}
-    <form action="{% url 'file-upload' %}" method="post" enctype="multipart/form-data">
+    <form action="{% url 'voter-upload' %}" method="post" enctype="multipart/form-data">
         {% csrf_token %}
         {{ form }}
         <input type="submit" value="Submit">

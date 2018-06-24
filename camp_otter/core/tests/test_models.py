@@ -3,6 +3,7 @@ from django.core.exceptions import ValidationError
 from django.contrib.auth.models import User
 from camp_otter.core.models import Place, Person, ContactPhone, ContactEmail, Election, BallotQuestion, Campaign, CampaignStaff
 
+import datetime
 # Tests for core models
 
 
@@ -71,9 +72,8 @@ class ContactEmailModelTests(TestCase):
 
 class ElectionModelTests(TestCase):
 
-    # TODO: build Election model tests
-
-    pass
+    def test_election_with_date_object(self):
+        election = Election(election_date=datetime.datetime.strptime('2016-11-08', "%Y-%m-%d").date(), election_type='GENERAL ELECTION')
 
 
 class BallotQuestionModelTests(TestCase):

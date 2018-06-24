@@ -56,6 +56,7 @@ class ContactEmail(models.Model):
 
 class Election(models.Model):
     election_date = models.DateField()
+    election_type = models.CharField(max_length=100)
 
 
 class BallotQuestion(models.Model):
