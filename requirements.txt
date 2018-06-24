@@ -2,6 +2,10 @@ pytz==2018.4  # https://github.com/stub42/pytz
 
 geopy==1.13
 
+pandas>=0.22
+
+xlrd
+
 # Django
 # ------------------------------------------------------------------------------
 django==2.0.3  # pyup: < 2.1  # https://www.djangoproject.com/

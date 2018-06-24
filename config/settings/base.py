@@ -47,7 +47,8 @@ THIRD_PARTY_APPS = [
 ]
 
 LOCAL_APPS = [
-    'camp_otter.core'
+    'camp_otter.core',
+    'camp_otter.voters',
 ]
 
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
@@ -67,7 +68,9 @@ ROOT_URLCONF = 'config.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [
+            'camp_otter/templates',
+        ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
