@@ -1,4 +1,5 @@
 from django.contrib.gis.db import models
+from django.contrib.gis.geos import Point
 from django.core.validators import RegexValidator
 
 from geopy.geocoders import Nominatim
@@ -6,18 +7,22 @@ from geopy.geocoders import Nominatim
 
 class Place(models.Model):
     place_name = models.CharField(max_length=250, blank=True)  # optional field for place name
-    unit = models.CharField(max_length=10, blank=True)
-    street_address = models.CharField(max_length=100)
+    street_number = models.CharField(max_length=20)
+    suffix_a = models.CharField(max_length=10, blank=True)
+    suffix_b = models.CharField(max_length=10, blank=True)
+    street_name = models.CharField(max_length=100)
     street_address_2 = models.CharField(max_length=100, blank=True)
+    unit = models.CharField(max_length=10, blank=True)
     city = models.CharField(max_length=250)
     state = models.CharField(max_length=2)
     zip_code = models.CharField(max_length=10)
+    zip_code_4 = models.CharField(max_length=4, blank=True)
 
     point = models.PointField(default='POINT(0.0 0.0)')
 
     def geocode(self):
         geolocator = Nominatim()
-        address_string = self.street_address + ', ' + self.city + ', ' + self.state
+        address_string = str(self.street_number) + ' ' + self.street_name + ', ' + self.city + ', ' + self.state
         location = geolocator.geocode(address_string)
         self.point.x = location.longitude
         self.point.y = location.latitude
@@ -29,13 +34,18 @@ class Place(models.Model):
             return self.place_name
         elif self.unit:
             address_string = address_string + self.unit + ' '
-        address_string = address_string + self.street_address + ', ' + self.city + ', ' + self.state
+        address_string = address_string + str(self.street_number) + ' ' + self.street_name + ', ' + \
+                         self.city + ', ' + self.state
         return address_string
 
 
 class Person(models.Model):
     first_name = models.CharField(max_length=100)
+    middle_name = models.CharField(max_length=100, blank=True)
     last_name = models.CharField(max_length=100)
+    sex = models.CharField(max_length=10, blank=True)
+    date_of_birth = models.DateField(blank=True)
+    is_deceased = models.BooleanField(default=False)
     residence = models.ForeignKey(Place, on_delete=models.PROTECT, blank=True)
 
     def __str__(self):
@@ -44,19 +54,37 @@ class Person(models.Model):
 
 class ContactPhone(models.Model):
     phone_number = models.CharField(max_length=16)
-    notes = models.CharField(max_length=50)
+    notes = models.CharField(max_length=50, blank=True)
     person = models.ForeignKey(Person, on_delete=models.PROTECT)
+    do_not_contact = models.BooleanField(default=False)
 
 
 class ContactEmail(models.Model):
     email = models.EmailField()
-    notes = models.CharField(max_length=50)
+    notes = models.CharField(max_length=50, blank=True)
     person = models.ForeignKey(Person, on_delete=models.PROTECT)
+    do_not_contact = models.BooleanField(default=False)
+
+
+class MailingAddress(models.Model):
+    place = models.ForeignKey(Place, on_delete=models.PROTECT)
+    notes = models.CharField(max_length=50, blank=True)
+    person = models.ForeignKey(Person, on_delete=models.PROTECT)
+    do_not_contact = models.BooleanField(default=False)
 
 
 class Election(models.Model):
     election_date = models.DateField()
-    election_type = models.CharField(max_length=100)
+    election_description = models.CharField(max_length=100)
+
+    type_choices = (
+        ('PG', 'Presedential Election'),
+        ('PPP', 'Presedential Preference Primary'),
+        ('SG', 'Statewide General Election'),
+        ('SP', 'Statewide Primary Election'),
+        ('SPC', 'Special Election'),
+    )
+    election_type = models.CharField(max_length=3, choices=type_choices, blank=True)
 
 
 class BallotQuestion(models.Model):

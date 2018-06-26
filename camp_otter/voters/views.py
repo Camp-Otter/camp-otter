@@ -15,7 +15,7 @@ def success(request):
 
 class VoterListView(ListView):
     model = Voter
-    paginate_by = 1  # the number of voters shown per page
+    paginate_by = 100  # the number of voters shown per page
     template_name = 'voters/voter_list.html'
 
     def get_queryset(self):
@@ -42,7 +42,12 @@ class VoterFileUploadView(View):
                         'first_name': form.cleaned_data['first_name'],
                         'last_name': form.cleaned_data['last_name'],
                         'voter_id': form.cleaned_data['voter_id'],
-                        'address': form.cleaned_data['address'],
+                        'street_number': form.cleaned_data['street_number'],
+                        'street_name': form.cleaned_data['street_name'],
+                        'street_address_2': form.cleaned_data['street_address_2'],
+                        'suffix_a': form.cleaned_data['suffix_a'],
+                        'suffix_b': form.cleaned_data['suffix_b'],
+                        'unit': form.cleaned_data['unit'],
                         'city': form.cleaned_data['city'],
                         'state': form.cleaned_data['state'],
                         'zip': form.cleaned_data['zip'],
@@ -72,7 +77,7 @@ class HistoryFileUploadView(View):
             data_dict = {
                         'voter_id': form.cleaned_data['voter_id'],
                         'date': form.cleaned_data['election_date'],
-                        'election': form.cleaned_data['election_type'],
+                        'election': form.cleaned_data['election_description'],
                         'precinct': form.cleaned_data['voter_precinct'],
                         }
             df = load_uploaded_file_to_dataframe(request.FILES['file'], data_dict)

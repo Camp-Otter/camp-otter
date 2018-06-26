@@ -1,4 +1,7 @@
 from django.test import TestCase
+from django.contrib.gis.geos import Point
+from django.contrib.gis.gdal import SpatialReference, CoordTransform
+from django.contrib.gis.gdal import DataSource
 from django.core.exceptions import ValidationError
 from django.contrib.auth.models import User
 from camp_otter.core.models import Place, Person, ContactPhone, ContactEmail, Election, BallotQuestion, Campaign, CampaignStaff
@@ -11,26 +14,27 @@ class PlaceModelTests(TestCase):
 
     def test_address_string_method(self):
         #  The __str__ method on a Place provides conditional logic on how to format the string.
-        house = Place(street_address='1 Main St.', city='Newport', state='RI')
+        house = Place(street_number=1, street_name='Main St.', city='Newport', state='RI')
         self.assertEquals(str(house), '1 Main St., Newport, RI')
-        landmark = Place(place_name='The Breakers', street_address='200 Bellevue Ave', city='Newport', state='RI')
+        landmark = Place(place_name='The Breakers', street_number='200', street_name='Bellevue Ave', city='Newport', state='RI')
         self.assertEquals(str(landmark), 'The Breakers')
         appartment = house
         appartment.unit = '22'
         self.assertEquals(str(appartment), '22 1 Main St., Newport, RI')
 
     def test_return_multiple_residents(self):
-        house = Place(street_address='1 Main St.', city='Newport', state='RI')
+        house = Place(street_number=1, street_name='Main St.', city='Newport', state='RI')
         house.save()
-        person1 = Person(first_name='Steve', last_name='Test', residence=house)
+        person1 = Person(first_name='Joe', last_name='Test', date_of_birth='1988-01-01', residence=house)
         person1.save()
-        person2 = Person(first_name='Joe', last_name='Test', residence=house)
+        person2 = Person(first_name='Steve', last_name='Voter', date_of_birth='1982-11-21', residence=house)
         person2.save()
         self.assertQuerysetEqual(house.person_set.all(), [repr(person1), repr(person2)], ordered=False)
 
     def test_spatial_field(self):
-        house = Place(street_address='1 Broadway', city='Newport', state='RI')
+        house = Place(street_number=1, street_name='Broadway', city='Newport', state='RI')
         house.save()
+        self.assertEqual(str(house.point.y), '0.0')
         house.geocode()
         self.assertEqual(str(house.point.y), '41.490611')
 
@@ -45,9 +49,9 @@ class PersonModelTests(TestCase):
 class ContactPhoneModelTests(TestCase):
 
     def test_create_phone_number(self):
-        house = Place(street_address='1 Main St.', city='Newport', state='RI')
+        house = Place(street_number=1, street_name='Main St.', city='Newport', state='RI')
         house.save()
-        person = Person(first_name='Joe', last_name='Test', residence=house)
+        person = Person(first_name='Joe', last_name='Test', date_of_birth='1988-01-01', residence=house)
         person.save()
         number = '5552345'
         phone = ContactPhone(phone_number=number, person=person)
@@ -59,9 +63,9 @@ class ContactPhoneModelTests(TestCase):
 class ContactEmailModelTests(TestCase):
 
     def test_create_email(self):
-        house = Place(street_address='1 Main St.', city='Newport', state='RI')
+        house = Place(street_number=1, street_name='Main St.', city='Newport', state='RI')
         house.save()
-        person = Person(first_name='Joe', last_name='Test', residence=house)
+        person = Person(first_name='Joe', last_name='Test', date_of_birth='1988-01-01', residence=house)
         person.save()
         email_addr = 'joe@example.com'
         email = ContactEmail(email=email_addr, person=person)
@@ -109,11 +113,11 @@ class CampaignModelTests(TestCase):
         question.save()
         camp1 = Campaign(campaign_name='Yes', ballot_question=question)
         camp1.save()
-        house = Place(street_address='1 Main St.', city='Newport', state='RI')
+        house = Place(street_number='1', street_name='Main St.', city='Newport', state='RI')
         house.save()
-        person1 = Person(first_name='Steve', last_name='Test', residence=house)
+        person1 = Person(first_name='Steve', last_name='Test', date_of_birth='1986-02-22', residence=house)
         person1.save()
-        person2 = Person(first_name='Joe', last_name='Test', residence=house)
+        person2 = Person(first_name='Joe', last_name='Test', date_of_birth='1990-12-12', residence=house)
         person2.save()
         staff1 = CampaignStaff(staff_memeber=person1, campaign_name=camp1, position='Volunteer')
         staff2 = CampaignStaff(staff_memeber=person2, campaign_name=camp1, position='Manager')
@@ -125,9 +129,9 @@ class CampaignModelTests(TestCase):
 class CampaignStaffModelTests(TestCase):
 
     def test_staff_string_method(self):
-        house = Place(street_address='1 Main St.', city='Newport', state='RI')
+        house = Place(street_number=1, street_name='Main St.', city='Newport', state='RI')
         house.save()
-        person = Person(first_name='Joe', last_name='Test', residence=house)
+        person = Person(first_name='Joe', last_name='Test', date_of_birth='1986-12-03', residence=house)
         person.save()
         election = Election(election_date='2018-01-01')
         election.save()
@@ -137,3 +141,13 @@ class CampaignStaffModelTests(TestCase):
         camp1.save()
         staffer = CampaignStaff(staff_memeber=person, campaign_name=camp1, position='Tester')
         self.assertEqual(str(staffer), str(person))
+
+
+class GDALModelInterfaceTests(TestCase):  #FIXME: this raises django.contrib.gis.gdal.error.GDALException: OGR failure.
+
+    def test_point_constructor_and_srs_coversion(self):
+        gcoord = SpatialReference('4326')
+        mycoord = SpatialReference(3857)
+        trans = CoordTransform(gcoord, mycoord)
+        pnt = Point(x=-122.33, y=47.61, srid=4326)
+        pnt.transform(trans)

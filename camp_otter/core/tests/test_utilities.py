@@ -9,7 +9,9 @@ class TestPlacesUtilities(TestCase):
     def test_create_places_from_dataframe_in_empty_db(self):
         # define test dataframe with repeated places
 
-        data = {'address': ['1 Broadway', '1 Broadway', '200 Spring St'],
+        data = {
+                'street_number': ['1', '1', '200'],
+                'street_name': ['Broadway', 'Broadway', 'Spring St'],
                 'city': ['Newport', 'Newport', 'Newport'],
                 'state': ['RI', 'RI', 'RI'],
                 'zip': ['02840', '02840', '02840'],

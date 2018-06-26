@@ -19,8 +19,8 @@ def import_voter_list_dataframe(df):
 
     for row in df.iterrows():
         r = row[1]
-        voter_residence = Place.objects.filter(street_address=r.address, city=r.city, state=r.state, zip_code=r.zip).first()  # this should return only one result
-        person_list.extend([Person(first_name=r.first_name, last_name=r.last_name, residence=voter_residence)])
+        voter_residence = Place.objects.filter(street_number=r.street_number, street_name=r.street_name, city=r.city, state=r.state, zip_code=r.zip).first()  # this should return only one result
+        person_list.extend([Person(first_name=r.first_name, last_name=r.last_name, residence=voter_residence, date_of_birth=r.date_of_birth)])
         voter_id_list.extend([r.voter_id])
 
     Person.objects.bulk_create(person_list)
@@ -51,8 +51,8 @@ def import_voter_history_dataframe(df):
 
     for elec in elections_in_history.iterrows():
         e = elec[1]
-        if not election_queryset.filter(election_date=str(e.date), election_type=e.election).exists():
-            new_election_objects_list.extend([Election(election_date=str(e.date), election_type=e.election)])
+        if not election_queryset.filter(election_date=str(e.date), election_description=e.election_description).exists():
+            new_election_objects_list.extend([Election(election_date=str(e.date), election_description=e.election_description)])
             new_election_dates_list.extend([str(e.date)])
 
     Election.objects.bulk_create(new_election_objects_list)
@@ -75,8 +75,8 @@ def import_voter_history_dataframe(df):
         else:  # check voterparticipation_set for existing event matching this one, and create new if doesn't exist
             for row in voter_history_df.iterrows():
                 r = row[1]
-                if not this_voter.voterparticipation_set.filter(election__election_date=r.date).exists():
-                    this_voter.add_election(election=election_dict[r.date], precinct=r.precinct)
+                if not this_voter.voterparticipation_set.filter(election__election_date=str(r.date)).exists():
+                    this_voter.add_election(election=election_dict[str(r.date)], precinct=r.precinct)
 
 
 def load_uploaded_file_to_dataframe(file, field_dict=None):
