@@ -4,7 +4,7 @@ from django.contrib.gis.gdal import SpatialReference, CoordTransform
 from django.contrib.gis.gdal import DataSource
 from django.core.exceptions import ValidationError
 from django.contrib.auth.models import User
-from camp_otter.core.models import Place, Person, ContactPhone, ContactEmail, Election, BallotQuestion, Campaign, CampaignStaff
+from camp_otter.core.models import Place, Person, ContactPhone, ContactEmail, Election, BallotQuestion, Campaign, CampaignStaff, MailingAddress
 
 import datetime
 # Tests for core models
@@ -37,6 +37,18 @@ class PlaceModelTests(TestCase):
         self.assertEqual(str(house.point.y), '0.0')
         house.geocode()
         self.assertEqual(str(house.point.y), '41.490611')
+
+
+class MailingAddressModelTests(TestCase):
+
+    def test_mailing_address_default_on_person_create(self):
+        # TODO: a mailing address object should be created by the person object unless explicitly blocked
+        house = Place(street_number=1, street_name='Main St.', city='Newport', state='RI')
+        house.save()
+        person = Person(first_name='Joe', last_name='Test', date_of_birth='1988-01-01', residence=house)
+        person.save()
+        self.assertEqual(MailingAddress.objects.count(), 1)
+        self.assertQuerysetEqual(MailingAddress.objects.all(), Place.objects.all())
 
 
 class PersonModelTests(TestCase):

@@ -1,6 +1,8 @@
 from django.contrib.gis.db import models
 from django.contrib.gis.geos import Point
 from django.core.validators import RegexValidator
+from django.contrib.contenttypes.fields import GenericForeignKey
+from django.contrib.contenttypes.models import ContentType
 
 from geopy.geocoders import Nominatim
 
