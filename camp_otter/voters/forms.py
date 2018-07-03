@@ -7,7 +7,9 @@ class UploadVoterFileForm(forms.Form):
     # fields to define column headers containing required model data
     first_name = forms.CharField()
     last_name = forms.CharField()
+    date_of_birth = forms.CharField()
     voter_id = forms.CharField()
+    voter_status = forms.CharField()
     street_number = forms.CharField()
     street_name = forms.CharField()
     street_name_2 = forms.CharField()

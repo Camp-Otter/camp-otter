@@ -1,6 +1,6 @@
 from django.test import TestCase
-from camp_otter.voters.models import Voter
-from camp_otter.core.models import Place, Person, Election
+from camp_otter.voters.models import Voter, VoterGroup
+from camp_otter.core.models import Place, Person, Election, GroupRelation, GroupObject
 
 
 class VoterModelTests(TestCase):
@@ -30,3 +30,17 @@ class VoterModelTests(TestCase):
         voter.save()
         voter.add_election(election=election, precinct=1000)
         #self.assert(election.voterparticipation_set.all(), voter.voterparticipation_set.all())
+
+
+class VoterGroupTests(TestCase):
+
+    def test_voter_group_inheritance(self):
+        house = Place(street_number=1, street_name='Broadway', city='Newport', state='RI')
+        house.save()
+        voter = Voter.objects.create_new_voter(first_name='Joe', last_name='Test', date_of_birth='1988-01-23',
+                                               residence=house, voter_id=112341)
+        myvoters = VoterGroup(name='Blue', party='DEM')
+        myvoters.save()
+        myrel = GroupRelation(group=myvoters, content_object=voter)
+        myrel.save()
+        self.assertEqual(myrel.group.party, 'DEM')

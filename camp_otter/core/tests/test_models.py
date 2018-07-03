@@ -4,7 +4,8 @@ from django.contrib.gis.gdal import SpatialReference, CoordTransform
 from django.contrib.gis.gdal import DataSource
 from django.core.exceptions import ValidationError
 from django.contrib.auth.models import User
-from camp_otter.core.models import Place, Person, ContactPhone, ContactEmail, Election, BallotQuestion, Campaign, CampaignStaff, MailingAddress
+from camp_otter.core.models import Place, Person, ContactPhone, \
+    ContactEmail, Election, BallotQuestion, Campaign, CampaignStaff, MailingAddress, GroupObject, GroupRelation
 
 import datetime
 # Tests for core models
@@ -155,11 +156,51 @@ class CampaignStaffModelTests(TestCase):
         self.assertEqual(str(staffer), str(person))
 
 
-class GDALModelInterfaceTests(TestCase):  #FIXME: this raises django.contrib.gis.gdal.error.GDALException: OGR failure.
+class GDALModelInterfaceTests(TestCase):
 
     def test_point_constructor_and_srs_coversion(self):
+        # This will fail if there are errors in the GDAL installation
         gcoord = SpatialReference('4326')
         mycoord = SpatialReference(3857)
         trans = CoordTransform(gcoord, mycoord)
         pnt = Point(x=-122.33, y=47.61, srid=4326)
         pnt.transform(trans)
+
+
+class GroupModelTests(TestCase):
+
+    def test_create_new_group(self):
+        mygroup = GroupObject(name='testgroup')
+        mygroup.save()
+        self.assertEqual(str(mygroup), 'testgroup')
+        self.assertEqual(GroupObject.objects.count(), 1)
+
+    def test_create_group_relation(self):
+        mygroup = GroupObject(name='testgroup')
+        mygroup.save()
+        house = Place(street_number=1, street_name='Main St.', city='Newport', state='RI')
+        house.save()
+        person = Person(first_name='Joe', last_name='Test', date_of_birth='1986-12-03', residence=house)
+        person.save()
+        grouprel = GroupRelation(group=mygroup, content_object=person)
+        grouprel.save()
+        self.assertEqual(str(grouprel), str(person))
+        grouprel2 = GroupRelation(group=mygroup, content_object=house)
+        grouprel2.save()
+        self.assertEqual(str(grouprel2), str(house))
+
+    def test_multiple_group_membership(self):
+        mygroup = GroupObject(name='testgroup')
+        mygroup.save()
+        myothergroup = GroupObject(name='secondgroup')
+        myothergroup.save()
+        house = Place(street_number=1, street_name='Main St.', city='Newport', state='RI')
+        house.save()
+        person = Person(first_name='Joe', last_name='Test', date_of_birth='1986-12-03', residence=house)
+        person.save()
+        grouprel = GroupRelation(group=mygroup, content_object=person)
+        grouprel.save()
+        otherrel = GroupRelation(group=myothergroup, content_object=person)
+        otherrel.save()
+        self.assertEqual(mygroup.grouprelation_set.count(), 1)
+        self.assertEqual(myothergroup.grouprelation_set.count(), 1)
