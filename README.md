@@ -15,21 +15,10 @@ A dockerfile with PostGIS can be used for the geospatial database, simplifying s
 
 First, install [Docker](https://www.docker.com/).
 
-Spin up a database container with the command:
+Spin up a database container and initialize the db with the commands:
 ```shell
-docker run --name django-postgis -e POSTGRES_PASSWORD=testdjango -p:8080:5432 -d mdillon/postgis
-```
-
-Connect to the server to create the database:
-```shell
-docker run -it --link django-postgis:postgres postgres psql -h postgres -U postgres
-```
-and the password from above. (This password can also be set using the `POSTGIS_PASSWORD` environment variable.)
-
-Once you're logged in, create the database:
-```sql
-CREATE DATABASE geodjango;
-\q
+docker run --name django-postgis -e POSTGRES_PASSWORD=testdjango -p:8080:5432 -d paulopperman/docker-postgis-tiger:0.5
+docker exec -it django-postgis ./init-db.sh
 ```
 
 Verify that the settings in `config.setting.base` match what you configured, then everything should be good to go.
