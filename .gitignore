@@ -53,3 +53,4 @@ fabric.properties
 
 # Databases
 *.sqlite3
+./database

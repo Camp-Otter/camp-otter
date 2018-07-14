@@ -23,11 +23,11 @@ def create_places_from_dataframe(df):
         for row in place_df.iterrows():
             r = row[1]
             new_place = Place(
-                    street_number=r.street_number,
+                    street_number=str(r.street_number),
                     street_name=r.street_name,
                     city=r.city,
                     state=r.state,
-                    zip_code=r.zip
+                    zip_code=str(r.zip),
                 )
 
             # handle optional fields
