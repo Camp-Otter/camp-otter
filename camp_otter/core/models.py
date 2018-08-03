@@ -1,6 +1,8 @@
 from django.contrib.gis.db import models
 from django.contrib.gis.geos import Point
 from django.core.validators import RegexValidator
+from django.contrib.contenttypes.fields import GenericForeignKey
+from django.contrib.contenttypes.models import ContentType
 
 from geopy.geocoders import Nominatim
 
@@ -8,34 +10,47 @@ from geopy.geocoders import Nominatim
 class Place(models.Model):
     place_name = models.CharField(max_length=250, blank=True)  # optional field for place name
     street_number = models.CharField(max_length=20)
-    suffix_a = models.CharField(max_length=10, blank=True)
-    suffix_b = models.CharField(max_length=10, blank=True)
+    suffix_a = models.CharField(max_length=20, blank=True)
+    suffix_b = models.CharField(max_length=20, blank=True)
     street_name = models.CharField(max_length=100)
-    street_address_2 = models.CharField(max_length=100, blank=True)
-    unit = models.CharField(max_length=10, blank=True)
+    street_name_2 = models.CharField(max_length=100, blank=True)
+    unit = models.CharField(max_length=20, blank=True)
     city = models.CharField(max_length=250)
     state = models.CharField(max_length=2)
-    zip_code = models.CharField(max_length=10)
+    zip_code = models.CharField(max_length=30)
     zip_code_4 = models.CharField(max_length=4, blank=True)
 
     point = models.PointField(default='POINT(0.0 0.0)')
 
-    def geocode(self):
+    def geocode(self, *args, **kwargs):
+        pass
+        # TODO: need to log this and provide an update bar for batch jobs
+        # TODO: covert this to tiger geocoder with build-in data
         geolocator = Nominatim()
-        address_string = str(self.street_number) + ' ' + self.street_name + ', ' + self.city + ', ' + self.state
-        location = geolocator.geocode(address_string)
-        self.point.x = location.longitude
-        self.point.y = location.latitude
-        self.save()
+        # address_string = str(int(self.street_number)) + ' ' + str(self.street_name) + ', ' + str(self.city) + ', ' + str(self.state)
+        address_string = str(self)
+        try:
+            location = geolocator.geocode(address_string)
+            self.point.x = location.longitude
+            self.point.y = location.latitude
+        except AttributeError:
+            self.point.x = 0
+            self.point.y = 0
+        self.save(*args, **kwargs)
 
     def __str__(self):
+        # FIXME: returning empty spaces in suffix, street_name_2
         address_string = ''
         if self.place_name:
             return self.place_name
-        elif self.unit:
-            address_string = address_string + self.unit + ' '
-        address_string = address_string + str(self.street_number) + ' ' + self.street_name + ', ' + \
-                         self.city + ', ' + self.state
+        else:
+            address_string = address_string
+        address_string = address_string + str(self.street_number) + ' ' + self.street_name + ', '
+        if str(self.street_name_2) != '':
+            address_string = address_string + ' ' + str(self.street_name_2) + ', '
+        if str(self.unit) != '':
+            address_string = address_string + ' ' + str(self.unit) + ', '
+        address_string = address_string + self.city + ', ' + self.state
         return address_string
 
 
@@ -111,3 +126,28 @@ class CampaignStaff(models.Model):
 
     def __str__(self):
         return str(self.staff_memeber)
+
+
+class GroupObject(models.Model):
+    """
+    A model for grouping related objects together.  It works in conjunction with a GroupRelation object.
+    """
+    name = models.CharField(max_length=250)
+
+    def __str__(self):
+        return str(self.name)
+
+
+class GroupRelationManager(models.Manager):
+    # TODO: simplify and handle more complex group creation and operations
+    pass
+
+class GroupRelation(models.Model):
+    group = models.ForeignKey(GroupObject, on_delete=models.PROTECT)
+    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
+    object_id = models.PositiveIntegerField()
+    content_object = GenericForeignKey('content_type', 'object_id')
+    objects = GroupRelationManager()
+
+    def __str__(self):
+        return str(self.content_object)

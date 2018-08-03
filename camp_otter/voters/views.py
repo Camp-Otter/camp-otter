@@ -42,9 +42,11 @@ class VoterFileUploadView(View):
                         'first_name': form.cleaned_data['first_name'],
                         'last_name': form.cleaned_data['last_name'],
                         'voter_id': form.cleaned_data['voter_id'],
+                        'voter_status': form.cleaned_data['voter_status'],
+                        'date_of_birth': form.cleaned_data['date_of_birth'],
                         'street_number': form.cleaned_data['street_number'],
                         'street_name': form.cleaned_data['street_name'],
-                        'street_address_2': form.cleaned_data['street_address_2'],
+                        'street_name_2': form.cleaned_data['street_name_2'],
                         'suffix_a': form.cleaned_data['suffix_a'],
                         'suffix_b': form.cleaned_data['suffix_b'],
                         'unit': form.cleaned_data['unit'],
@@ -52,8 +54,17 @@ class VoterFileUploadView(View):
                         'state': form.cleaned_data['state'],
                         'zip': form.cleaned_data['zip'],
                         }
+
+            required_fields = ['first_name',  # fields to verify are complete
+                               'last_name',
+                               'voter_id',
+                               'street_number',
+                               'street_name',
+                               'city',
+                               'state',
+                               'zip']
             df = load_uploaded_file_to_dataframe(request.FILES['file'], data_dict)
-            import_voter_list_dataframe(df.dropna())
+            import_voter_list_dataframe(df.dropna(subset=required_fields))
             return redirect(self.success_url)  # TODO: render file in preprocessing view
         else:
             return render(request, self.template_name, {'form': form})

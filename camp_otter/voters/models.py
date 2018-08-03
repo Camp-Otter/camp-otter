@@ -1,5 +1,5 @@
 from django.db import models
-from camp_otter.core.models import Person, Election
+from camp_otter.core.models import Person, Election, GroupObject
 
 # Create your models here.
 class VoterManager(models.Manager):
@@ -24,7 +24,7 @@ class Voter(models.Model):
     person = models.OneToOneField(Person, on_delete=models.PROTECT)
     voter_id = models.BigIntegerField()
     voter_status = models.CharField(max_length=3)
-    current_party = models.CharField(max_length=20)
+    current_party = models.CharField(max_length=20, blank=True)
 
     # use an object manager to handle object creation
     objects = VoterManager()
@@ -44,3 +44,7 @@ class VoterParticipation(models.Model):
     ballot_type = models.CharField(max_length=10, blank=True)
     party = models.CharField(max_length=20, blank=True)
 
+
+class VoterGroup(GroupObject):
+    # model stub for inheritance testing and future growth
+    party = models.CharField(max_length=5, blank=True)

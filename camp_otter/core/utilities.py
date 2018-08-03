@@ -1,17 +1,18 @@
 from camp_otter.core.models import Place
+import pandas as pd
 
 def create_places_from_dataframe(df):
 
     place_columns = ['street_number',
                      'street_name',
-                     'street_address_2',
+                     'street_name_2',
                      'unit',
                      'suffix_a',
                      'suffix_b',
                      'city',
                      'state',
                      'zip']  # specify the columns that correspond to place model
-
+    # TODO: fix data types for street number and zip code
     place_df = df[[value for value in place_columns if value in df.columns]].drop_duplicates()
 
     place_object_list = []  # intialize empty list for bulk_write()
@@ -22,11 +23,11 @@ def create_places_from_dataframe(df):
         for row in place_df.iterrows():
             r = row[1]
             new_place = Place(
-                    street_number=r.street_number,
+                    street_number=str(r.street_number),
                     street_name=r.street_name,
                     city=r.city,
                     state=r.state,
-                    zip_code=r.zip
+                    zip_code=str(r.zip),
                 )
 
             # handle optional fields

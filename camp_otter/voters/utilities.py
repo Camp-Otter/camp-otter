@@ -13,13 +13,19 @@ def import_voter_list_dataframe(df):
     """
 
     # create places by getting unique addresses
-    create_places_from_dataframe(df)
+    # create_places_from_dataframe(df)
     person_list = []
     voter_id_list = []
 
+    df['date_of_birth'] = pd.to_datetime(df['date_of_birth'])
+
     for row in df.iterrows():
         r = row[1]
-        voter_residence = Place.objects.filter(street_number=r.street_number, street_name=r.street_name, city=r.city, state=r.state, zip_code=r.zip).first()  # this should return only one result
+        # set optional fields to default to blank using defaults argument in get_or_create
+        voter_residence, created = Place.objects.get_or_create(street_number=r.street_number, street_name=r.street_name,
+                                                               city=r.city, state=r.state, zip_code=r.zip,
+                                                               defaults={'unit': '', 'suffix_a': '', 'suffix_b': '',
+                                                                         'street_name_2': ''})
         person_list.extend([Person(first_name=r.first_name, last_name=r.last_name, residence=voter_residence, date_of_birth=r.date_of_birth)])
         voter_id_list.extend([r.voter_id])
 
