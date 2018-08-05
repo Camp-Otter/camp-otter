@@ -15,13 +15,13 @@ class PlaceModelTests(TestCase):
 
     def test_address_string_method(self):
         #  The __str__ method on a Place provides conditional logic on how to format the string.
-        house = Place(street_number=1, street_name='Main St.', city='Newport', state='RI')
-        self.assertEquals(str(house), '1 Main St., Newport, RI')
+        house = Place(street_number=1, street_name='Main St.', city='Newport', state='RI', zip_code='02840')
+        self.assertEquals(str(house), '1 Main St., Newport, RI, 02840')
         landmark = Place(place_name='The Breakers', street_number='200', street_name='Bellevue Ave', city='Newport', state='RI')
         self.assertEquals(str(landmark), 'The Breakers')
         appartment = house
         appartment.unit = '22'
-        self.assertEquals(str(appartment), '22 1 Main St., Newport, RI')
+        self.assertEquals(str(appartment), '1 Main St., Unit 22, Newport, RI, 02840')
 
     def test_return_multiple_residents(self):
         house = Place(street_number=1, street_name='Main St.', city='Newport', state='RI')
@@ -33,9 +33,9 @@ class PlaceModelTests(TestCase):
         self.assertQuerysetEqual(house.person_set.all(), [repr(person1), repr(person2)], ordered=False)
 
     def test_spatial_field(self):
-        house = Place(street_number=1, street_name='Broadway', city='Newport', state='RI')
+        house = Place(street_number=1, street_name='Broadway', city='Newport', state='RI', zip_code='02840')
         house.save()
-        # self.assertEqual(str(house.point.y), '0.0')
+        self.assertEqual(str(house.point.y), '0.0')
         house.geocode()
         self.assertEqual(str(house.point.y), '41.490611')
 

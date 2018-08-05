@@ -102,6 +102,19 @@ DATABASES = {
         'PASSWORD': DB_PASSWORD,
         'HOST': 'localhost',
         'PORT': '8080',
+    },
+    # The tiger database is used for geocoding functionality.  This should be a read-only connection.
+    # The custom test runner will explicitly be looking for the 'tiger' db, so don't change the name.
+    'tiger': {
+        'ENGINE': 'django.contrib.gis.db.backends.postgis',
+        'NAME': 'postgres',
+        'USER': 'postgres',
+        'PASSWORD': DB_PASSWORD,
+        'HOST': 'localhost',
+        'PORT': '8080',
+        'TEST': {
+            'CREATE_DB': False,
+        },
     }
 }
 
@@ -143,3 +156,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.0/howto/static-files/
 
 STATIC_URL = '/static/'
+
+# Test runner
+# Use a custom test runner to allow access
+TEST_RUNNER = 'camp_otter.test.custom_runner.CampOtterRunner'
