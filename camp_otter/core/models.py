@@ -1,11 +1,9 @@
 from django.contrib.gis.db import models
-from django.contrib.gis.geos import Point
 from django.core.validators import RegexValidator
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 
-from geopy.geocoders import Nominatim
-from .postgis_utilities import tiger_geocode_address
+from .postgis_utilities import tiger_geocode_address, pretty_address
 
 
 class Place(models.Model):
@@ -24,7 +22,6 @@ class Place(models.Model):
     point = models.PointField(default='POINT(0.0 0.0)')
 
     def pretty_address(self):
-        # TODO: function to create a nice-looking address to work with USPS mailer and PostGIS
         # https://postgis.net/docs/Normalize_Address.html
         pretty_addy = ''  # start with blank string
         pretty_addy += str(self.street_number) + ' '
@@ -43,43 +40,17 @@ class Place(models.Model):
         if self.zip_code_4:
             pretty_addy += '-' + self.zip_code_4
 
-        return pretty_addy
+        return pretty_address('tiger', pretty_addy)
 
-    def geocode(self, *args, **kwargs):
+    def geocode(self):
         # TODO: need to log this and provide an update bar for batch jobs
-        # TODO: covert this to tiger geocoder with build-in data
-
         db = 'tiger'
-
-        # geolocator = Nominatim()
-        # # address_string = str(int(self.street_number)) + ' ' + str(self.street_name) + ', ' + str(self.city) + ', ' + str(self.state)
-        # address_string = str(self)
-        # try:
-        #     location = geolocator.geocode(address_string)
-        #     self.point.x = location.longitude
-        #     self.point.y = location.latitude
-        # except AttributeError:
-        #     self.point.x = 0
-        #     self.point.y = 0
-        # self.save(*args, **kwargs)
         geo_data = tiger_geocode_address(db, self.pretty_address())
         self.point.x = geo_data[1]
         self.point.y = geo_data[2]
         self.save()
 
     def __str__(self):
-        # # FIXME: returning empty spaces in suffix, street_name_2
-        # address_string = ''
-        # if self.place_name:
-        #     return self.place_name
-        # else:
-        #     address_string = address_string
-        # address_string = address_string + str(self.street_number) + ' ' + self.street_name + ', '
-        # if str(self.street_name_2) != '':
-        #     address_string = address_string + ' ' + str(self.street_name_2) + ', '
-        # if str(self.unit) != '':
-        #     address_string = address_string + ' ' + str(self.unit) + ', '
-        # address_string = address_string + self.city + ', ' + self.state
         if self.place_name:
             return self.place_name
         else:

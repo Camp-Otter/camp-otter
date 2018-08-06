@@ -52,8 +52,8 @@ class VoterFileImportTests(TestCase):
         self.assertEqual(Place.objects.all().count(), 2)
         self.assertEqual(Person.objects.all().count(), 3)
         self.assertEqual(Voter.objects.all().count(), 3)
-        self.assertEqual(str(Place.objects.last()), '200 Spring St, Newport, RI, 02840')
-        self.assertEqual(str(Voter.objects.last().person.residence), '1 Broadway, Newport, RI, 02840')
+        self.assertEqual(str(Place.objects.last()), '200 Spring St, Newport, RI 02840')
+        self.assertEqual(str(Voter.objects.last().person.residence), '1 Broadway, Newport, RI 02840')
         self.assertEqual(Voter.objects.first().voter_id, 10)
 
     def test_return_datafile_headers(self):
