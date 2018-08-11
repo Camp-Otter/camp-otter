@@ -95,9 +95,9 @@ def load_uploaded_file_to_dataframe(file, field_dict=None):
 
     filename = file.name
     if filename.endswith('.csv'):
-        df = pd.read_csv(file, header=0)
+        df = pd.read_csv(file, header=0, dtype='str')
     elif filename.endswith('.xls') or filename.endswith('.xlsx'):
-        df = pd.read_excel(file, header=0)
+        df = pd.read_excel(file, header=0, dtype='str')
 
     # if field mapping isn't specified, assume the column headers are already mapped
     if field_dict is not None:
