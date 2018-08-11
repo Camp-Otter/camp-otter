@@ -11,6 +11,7 @@ psycopg2==2.7.4
 # Django
 # ------------------------------------------------------------------------------
 django==2.1  # pyup: < 2.2  # https://www.djangoproject.com/
+django-leaflet => 0.24 # https://django-leaflet.readthedocs.io/en/latest/index.html
 django-environ==0.4.4  # https://github.com/joke2k/django-environ
 django-floppyforms==1.7  # http://django-floppyforms.readthedocs.io/en/latest/index.html
 # django-query-builder  # http://django-query-builder.readthedocs.io/en/latest/index.html

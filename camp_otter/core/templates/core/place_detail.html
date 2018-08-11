@@ -1,0 +1,21 @@
+{% extends '_base.html' %}
+
+{% load leaflet_tags %}
+
+{% block head %}
+    {% leaflet_js %}
+    {% leaflet_css %}
+{% endblock %}
+
+{% block content %}
+    <p> {{ object.__str__ }}</p>
+    <p>{{ object.point.y }}, {{ object.point.x }}</p>
+
+    {% leaflet_map "placemap" callback="window.map_init_basic" %}
+
+    <script type="text/javascript">
+        function map_init_basic (map, options) {
+            L.marker([{{ object.point.y}}, {{object.point.x}}]).addTo(map);
+        }
+    </script>
+{% endblock %}

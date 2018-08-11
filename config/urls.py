@@ -19,6 +19,7 @@ import camp_otter.voters.urls
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('core/', include('camp_otter.core.urls')),
     path('voters/', include('camp_otter.voters.urls')),
     path('outreach/', include('camp_otter.outreach.urls'))
 ]
