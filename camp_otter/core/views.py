@@ -17,10 +17,13 @@ class BasicMapView(TemplateView):
 
 
 class GeoJsonAPI(View):
+    # a view to manage place geojson data.  GET requests return all places serialized as geojson.
 
     def get(self, request):
+        # TODO: more parameters could be passed to provide other filters
         geojson_out = serialize('geojson', Place.objects.all(), geometry_field='point')
         return HttpResponse(geojson_out, content_type='application/json')
+
 
 def geocode_place_view(request, place_id):
     place = get_object_or_404(Place, pk=place_id)
