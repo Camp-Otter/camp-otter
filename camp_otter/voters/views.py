@@ -1,5 +1,5 @@
 from django.views.generic.list import ListView
-from django.views.generic import View
+from django.views.generic import View, DetailView
 from django.urls import reverse_lazy
 from django.shortcuts import render, redirect
 
@@ -11,6 +11,11 @@ from camp_otter.voters.utilities import import_uploaded_voter_file_to_db, load_u
 # Create your views here.
 def success(request):
     return render(request, 'voters/success.html')
+
+
+class VoterDetailView(DetailView):
+    model = Voter
+    template_name = 'voters/voter_detail.html'
 
 
 class VoterListView(ListView):

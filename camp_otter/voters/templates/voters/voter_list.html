@@ -8,7 +8,7 @@ Voter List
     <h1>Voters</h1>
 
     {% for voter in voter_list %}
-        <p>{{ voter.person }}</p>
+        <p><a href="{% url 'voter-detail' voter.pk %}">{{ voter.person }}</a></p>
     {% endfor %}
 
     <div class="pagination">

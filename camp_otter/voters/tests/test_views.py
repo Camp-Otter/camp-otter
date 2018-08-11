@@ -13,6 +13,11 @@ class VoterViewTests(TestCase):
         response = client.get(reverse_lazy('voter-list'))
         self.assertEqual(response.status_code, 200)
 
+    def test_voter_detail_view_voter_does_not_exist(self):
+        client = Client()
+        response = client.get(reverse_lazy('voter-detail', kwargs={'pk': 1}, current_app='voters'))
+        self.assertEqual(response.status_code, 404)       
+
     def test_file_upload_view(self):
         client = Client()
         response = client.get(reverse_lazy('voter-upload'))
