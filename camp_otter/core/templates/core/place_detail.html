@@ -5,17 +5,34 @@
 {% block head %}
     {% leaflet_js %}
     {% leaflet_css %}
+
+    <style type="text/css">
+        #placemap {
+            height: 500px;
+            width: 500px;
+        }
+    </style>
 {% endblock %}
 
 {% block content %}
-    <p> {{ object.__str__ }}</p>
-    <p>{{ object.point.y }}, {{ object.point.x }}</p>
+    <p> {{ object }}</p>
+    <a href="{%  url 'geocode-place' object.pk %}">Geocode</a>
 
     {% leaflet_map "placemap" callback="window.map_init_basic" %}
+    
+    <ul>
+    {% for peep in object.person_set.all %}
+        <li>{{ peep.first_name }}</li>
+    
+    {% endfor %}
+    
+    </ul>
 
     <script type="text/javascript">
         function map_init_basic (map, options) {
-            L.marker([{{ object.point.y}}, {{object.point.x}}]).addTo(map);
+            var place_marker = L.marker([{{ object.point.y}}, {{object.point.x}}]);
+            place_marker.addTo(map);
+            map.setView(new L.LatLng({{ object.point.y }}, {{ object.point.x }}), 12);
         }
     </script>
 {% endblock %}
