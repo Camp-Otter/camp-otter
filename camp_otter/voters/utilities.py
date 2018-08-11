@@ -89,7 +89,7 @@ def load_uploaded_file_to_dataframe(file, field_dict=None):
     """
     A utility function to read structured tabular data from an uploaded file and determine the input for pandas
     :param file: a csv or Excel file with the data
-            field_dict: a dictionary mapping model data to column names.  uses the file headers by default
+    :param field_dict: a dictionary mapping model data to column names.  uses the file headers by default
     :return: pandas.DataFrame() object
     """
 

@@ -1,0 +1,34 @@
+{% extends '_base.html' %}
+
+{% load leaflet_tags %}
+
+{% block head %}
+    {% leaflet_js %}
+    {% leaflet_css %}
+
+    <style type="text/css">
+        .leaflet-container { /* map css settings */
+            height: 100vh;
+        }
+    </style>
+
+    <script type="text/javascript">
+        var dataurl = '{% url "places-data" %}'; // get geojson from the api endpoint
+
+        window.addEventListener("map:init", function (event) {
+        var map = event.detail.map;
+            // Download GeoJSON data with Ajax and add to map
+        fetch(dataurl)
+          .then(function(resp) {
+            return resp.json();
+          })
+          .then(function(data) {
+              L.geoJson(data).addTo(map);
+          });
+      });
+    </script>
+{% endblock %}
+
+{% block content %}
+    {% leaflet_map "main" %}
+{% endblock %}
