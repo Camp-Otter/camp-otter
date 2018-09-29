@@ -5,13 +5,14 @@ Voter List
 {% endblock %}
 
 {% block content %}
-    <h1>Voters</h1>
+    <div class="container">
+        <h1>Voters</h1>
 
-    {% for voter in voter_list %}
-        <p><a href="{% url 'voter-detail' voter.pk %}">{{ voter.person }}</a></p>
-    {% endfor %}
+        {% for voter in voter_list %}
+            <p><a href="{% url 'voter-detail' voter.pk %}">{{ voter.person }}</a></p>
+        {% endfor %}
 
-    <div class="pagination">
+        <div class="pagination">
 
     <span class="step-links">
         {% if page_obj.has_previous %}
@@ -28,5 +29,6 @@ Voter List
             <a href="?page={{ page_obj.paginator.num_pages }}">last &raquo;</a>
         {% endif %}
     </span>
+        </div>
     </div>
 {% endblock %}

@@ -29,3 +29,20 @@ class UploadHistoryFileForm(forms.Form):
     election_date = forms.CharField()
     election_type = forms.CharField()
     voter_precinct = forms.CharField()
+
+
+class VoterForm(forms.Form):
+    first_name = forms.CharField()
+    last_name = forms.CharField()
+    date_of_birth = forms.DateField()
+    voter_id = forms.CharField()
+    voter_status = forms.CharField()
+    street_number = forms.CharField()
+    street_name = forms.CharField()
+    street_name_2 = forms.CharField(required=False)
+    unit = forms.CharField(required=False)
+    suffix_a = forms.CharField(required=False)
+    suffix_b = forms.CharField(required=False)
+    city = forms.CharField()
+    state = forms.CharField()
+    zip = forms.CharField()

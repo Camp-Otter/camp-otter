@@ -1,10 +1,11 @@
 from django.views.generic.list import ListView
-from django.views.generic import View, DetailView
+from django.views.generic import View, DetailView, CreateView, FormView
 from django.urls import reverse_lazy
 from django.shortcuts import render, redirect
 
+from camp_otter.core.models import Place
 from camp_otter.voters.models import Voter
-from camp_otter.voters.forms import UploadVoterFileForm, UploadHistoryFileForm
+from camp_otter.voters.forms import UploadVoterFileForm, UploadHistoryFileForm, VoterForm
 from camp_otter.voters.utilities import import_uploaded_voter_file_to_db, load_uploaded_file_to_dataframe, import_voter_list_dataframe, import_voter_history_dataframe
 
 
@@ -26,6 +27,36 @@ class VoterListView(ListView):
     def get_queryset(self):
         return Voter.objects.order_by('person__last_name', 'person__first_name')
 
+
+class CreateVoterView(FormView):
+    model = Voter
+    form_class = VoterForm
+    template_name = "voters/voter_form.html"
+
+    def form_valid(self, form):
+        # build objects with required fields first
+
+        residence = Place.objects.get_or_create(
+            street_number=form.cleaned_data['street_number'],
+            street_name=form.cleaned_data['street_name'],
+            city=form.cleaned_data['city'],
+            state=form.cleaned_data['state'],
+            zip_code=form.cleaned_data['zip']
+        )
+        # then handle optional fields
+
+        residence = residence[0]
+        residence.save()
+
+        voter = Voter.objects.create_new_voter(
+            first_name=form.cleaned_data['first_name'],
+            last_name=form.cleaned_data['last_name'],
+            residence=residence,
+            date_of_birth=form.cleaned_data['date_of_birth'],
+            voter_id=form.cleaned_data['voter_id']
+        )
+        voter.save()
+        return redirect('voter-detail', pk=voter.pk)
 
 # Upload view based on https://www.andygoldschmidt.com/2014/09/10/django-file-uploads-with-class-based-views/
 class VoterFileUploadView(View):

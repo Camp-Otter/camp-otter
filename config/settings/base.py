@@ -44,6 +44,8 @@ DJANGO_APPS = [
 
 THIRD_PARTY_APPS = [
     'leaflet',
+    'bootstrap',
+    'fontawesome',
 ]
 
 LOCAL_APPS = [

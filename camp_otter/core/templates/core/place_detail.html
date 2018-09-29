@@ -16,10 +16,11 @@
 
 {% block content %}
     <p> {{ object }}</p>
-    <a href="{%  url 'geocode-place' object.pk %}">Geocode</a>
+    <a href="{% url 'geocode-place' object.pk %}" class="btn btn-primary m-3" role="button">Geocode</a>
 
     {% leaflet_map "placemap" callback="window.map_init_basic" %}
-    
+
+    <div>
     <ul>
     {% for peep in object.person_set.all %}
         <li>{{ peep.first_name }}</li>
@@ -27,6 +28,7 @@
     {% endfor %}
     
     </ul>
+    </div>
 
     <script type="text/javascript">
         function map_init_basic (map, options) {
