@@ -1,6 +1,6 @@
 pytz==2018.4  # https://github.com/stub42/pytz
 
-geopy==1.13
+geopy==2.5.0
 
 pandas>=0.22
 
